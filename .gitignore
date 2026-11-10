@@ -1,0 +1,6 @@
+
+.venv/
+__pycache__/
+*.pyc
+create_notebooks_wrong.png
+.ipynb_checkpoints/
