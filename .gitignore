@@ -4,3 +4,8 @@ __pycache__/
 *.pyc
 create_notebooks_wrong.png
 .ipynb_checkpoints/
+.env
+.pytest_cache/
+node_modules/
+dist/
+.env.*

@@ -1,7 +1,14 @@
+fastapi
+uvicorn[standard]
+pydantic
+SQLAlchemy
+psycopg[binary]
+python-dotenv
+python-jose[cryptography]
+pwdlib[argon2]
+joblib
 pandas
 numpy
 scikit-learn
 scipy
-matplotlib
-seaborn
-jupyter
+pyarrow
