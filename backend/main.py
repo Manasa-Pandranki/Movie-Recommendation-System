@@ -2,7 +2,7 @@ from backend.recommendation import get_recommendations
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import jwt, JWTError
 from backend.auth import SECRET_KEY, ALGORITHM
 
@@ -21,7 +21,7 @@ from backend.auth import (
     create_access_token
 )
 from backend.schemas import UserRegister, UserLogin
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 def get_current_user(
     token: str = Depends(oauth2_scheme),
     db: Session = Depends(get_db)
@@ -257,6 +257,38 @@ def login_user(user: UserLogin, db: Session = Depends(get_db)):
 
     if not verify_password(
         user.password,
+        existing_user.hashed_password
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    access_token = create_access_token(
+        data={"sub": str(existing_user.id)}
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
+@app.post("/auth/token")
+def login_for_swagger(
+    form_data: OAuth2PasswordRequestForm = Depends(),
+    db: Session = Depends(get_db)
+):
+    existing_user = db.query(User).filter(
+        User.email == form_data.username
+    ).first()
+
+    if not existing_user or not existing_user.hashed_password:
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid email or password"
+        )
+
+    if not verify_password(
+        form_data.password,
         existing_user.hashed_password
     ):
         raise HTTPException(
