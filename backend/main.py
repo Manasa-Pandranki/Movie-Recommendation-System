@@ -60,7 +60,10 @@ app = FastAPI(title="Movie Recommendation System API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[
+    "http://localhost:5173",
+    "https://movie-recommendation-frontend-mp1u.onrender.com"
+],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
